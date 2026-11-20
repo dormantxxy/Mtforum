@@ -107,7 +107,8 @@ private class IntroView(context: Context, onNext: (Offset, Float) -> Unit) :
                 controller.start(!started)
                 controller.thaw()
                 controller.setCircleYOffsetWithView(findViewById(R.id.logo_image_wrapper), renderLayout)
-            } catch (error: RuntimeException) {
+            } catch (error: Throwable) {
+                // Android 12 没有 RuntimeShader/readAllBytes（API 33+），降级到普通动画
                 shaderFailed = true
                 controller.stop()
                 Log.e("MtForum", "Welcome shader unavailable", error)
