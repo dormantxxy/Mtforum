@@ -303,8 +303,7 @@ fun HomeScreen(account: AccountViewModel = viewModel()) {
                                 compositingStrategy = CompositingStrategy.ModulateAlpha
                                 transformOrigin = TransformOrigin(0.5f, 1f)
                             }
-                            .navigationBarsPadding()
-                            .padding(bottom = 14.dp)
+                            .padding(bottom = 15.dp) // 距屏幕底部固定 15dp
                     ) {
                         FloatingNavigationBar(
                             items = items,
