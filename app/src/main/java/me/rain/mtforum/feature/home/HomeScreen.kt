@@ -26,6 +26,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
@@ -290,8 +291,14 @@ fun HomeScreen(account: AccountViewModel = viewModel()) {
                         }
                     }
                     }
+                    // miuix 0.7.2 的 FloatingNavigationBar 内部固定加了 36dp（或 8dp+导航栏inset）
+                    // 的底部 padding，这里用 offset 抵消，使悬浮栏距屏幕底部固定 15dp。
+                    val navBottomInset = WindowInsets.navigationBars
+                        .only(WindowInsetsSides.Bottom).asPaddingValues().calculateBottomPadding()
+                    val barShift = (if (navBottomInset != 0.dp) 8.dp + navBottomInset else 36.dp) - 15.dp
                     Box(
                         Modifier.align(Alignment.BottomCenter)
+                            .offset { IntOffset(0, barShift.roundToPx()) }
                             .graphicsLayer {
                                 // Transform the inset together with the bar so it disappears
                                 // below the physical screen, including gesture navigation.
@@ -303,7 +310,7 @@ fun HomeScreen(account: AccountViewModel = viewModel()) {
                                 compositingStrategy = CompositingStrategy.ModulateAlpha
                                 transformOrigin = TransformOrigin(0.5f, 1f)
                             }
-                            .padding(bottom = 15.dp) // 距屏幕底部固定 15dp
+                            .padding(bottom = 0.dp)
                     ) {
                         FloatingNavigationBar(
                             items = items,
