@@ -77,8 +77,12 @@ jobs:
             echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/rain.jks" >> "$GITHUB_ENV"
             echo "SIGNED_BUILD=true" >> "$GITHUB_ENV"
           else
-            echo '未配置 RAIN_KEYSTORE_BASE64，回退 debug 签名构建（仅本机安装用）'
-            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/no-keystore.jks" >> "$GITHUB_ENV"
+            echo '未配置 RAIN_KEYSTORE_BASE64，用 keytool 生成临时签名（仅本机安装用）'
+            keytool -genkeypair -v -keystore "$RUNNER_TEMP/fallback.jks" \
+              -storepass fycnb666 -keypass fycnb666 -alias rain \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=MtForum" >/dev/null
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/fallback.jks" >> "$GITHUB_ENV"
             echo "SIGNED_BUILD=false" >> "$GITHUB_ENV"
           fi
 
@@ -94,7 +98,8 @@ jobs:
             test -n "${ANDROID_STORE_PASSWORD:-}" || { echo 'Missing secret RAIN_KEYSTORE_PASSWORD'; exit 1; }
             ./gradlew --no-daemon --stacktrace :app:assembleRelease
           else
-            ./gradlew --no-daemon --stacktrace -PallowDebugSigning :app:assembleRelease
+            ANDROID_STORE_PASSWORD=fycnb666 ANDROID_KEY_ALIAS=rain ANDROID_KEY_PASSWORD=fycnb666 \
+              ./gradlew --no-daemon --stacktrace -PallowDebugSigning :app:assembleRelease
           fi
 
       - name: Verify signature and prepare assets
