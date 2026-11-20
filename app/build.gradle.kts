@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId = "me.rain.mtforum"
-        minSdk = 33
+        minSdk = 31
         targetSdk = 36
         versionCode = 23
         versionName = "0.4.9"

@@ -1,6 +1,7 @@
 package me.rain.mtforum.feature.onboarding
 
 import android.Manifest
+import android.os.Build
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -46,7 +47,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 internal fun PermissionScreen(onBack: () -> Unit, onContinue: () -> Unit) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
-    fun isGranted(): Boolean = ContextCompat.checkSelfPermission(
+    fun isGranted(): Boolean = Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(
         context, Manifest.permission.POST_NOTIFICATIONS,
     ) == PackageManager.PERMISSION_GRANTED
     var granted by remember { mutableStateOf(isGranted()) }
@@ -88,7 +89,7 @@ internal fun PermissionScreen(onBack: () -> Unit, onContinue: () -> Unit) {
                 summary = stringResource(R.string.notification_summary),
                 status = stringResource(if (granted) R.string.granted else R.string.optional),
                 onClick = {
-                    if (!granted && !asked) {
+                    if (!granted && !asked && Build.VERSION.SDK_INT >= 33) {
                         asked = true
                         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     } else {
