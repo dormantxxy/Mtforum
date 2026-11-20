@@ -77,11 +77,8 @@ jobs:
             echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/rain.jks" >> "$GITHUB_ENV"
             echo "SIGNED_BUILD=true" >> "$GITHUB_ENV"
           else
-            echo '未配置 RAIN_KEYSTORE_BASE64，用 keytool 生成临时签名（仅本机安装用）'
-            keytool -genkeypair -v -keystore "$RUNNER_TEMP/fallback.jks" \
-              -storepass fycnb666 -keypass fycnb666 -alias rain \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -dname "CN=MtForum" >/dev/null
+            echo '未配置 RAIN_KEYSTORE_BASE64，使用仓库内置 fallback 签名（仅本机安装用，签名跨构建一致）'
+            cp "$GITHUB_WORKSPACE/signing/fallback.jks" "$RUNNER_TEMP/fallback.jks"
             echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/fallback.jks" >> "$GITHUB_ENV"
             echo "SIGNED_BUILD=false" >> "$GITHUB_ENV"
           fi
