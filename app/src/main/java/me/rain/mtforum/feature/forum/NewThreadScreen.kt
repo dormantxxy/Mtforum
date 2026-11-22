@@ -38,6 +38,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.rain.mtforum.core.network.*
+import me.rain.mtforum.core.network.readUpTo
 import me.rain.mtforum.core.ui.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import top.yukonga.miuix.kmp.basic.*
@@ -205,7 +206,7 @@ internal fun NewThreadScreen(
                             ?: if (imagesOnly) "image/jpeg" else "application/octet-stream"
                         val max = active.upload.maxBytes.coerceAtMost(10 * 1024 * 1024)
                         val body = context.contentResolver.openInputStream(uri)?.use {
-                            it.readNBytes(max + 1)
+                            it.readUpTo(max + 1)
                         } ?: throw ForumException("无法读取附件")
                         if (body.size > max) throw ForumException("附件超过论坛上传限制")
                         var filename = if (imagesOnly) "picture.jpg" else "attachment.bin"

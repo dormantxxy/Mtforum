@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.rain.mtforum.core.network.*
+import me.rain.mtforum.core.network.readUpTo
 import me.rain.mtforum.core.ui.*
 import top.yukonga.miuix.kmp.basic.*
 import top.yukonga.miuix.kmp.extra.*
@@ -397,7 +398,7 @@ private fun NativeForm(
                                         ?: "application/octet-stream"
                                 val bytes =
                                     context.contentResolver.openInputStream(uri)?.use {
-                                        it.readNBytes(10 * 1024 * 1024 + 1)
+                                        it.readUpTo(10 * 1024 * 1024 + 1)
                                     } ?: throw ForumException("无法读取所选文件")
                                 if (bytes.size > 10 * 1024 * 1024)
                                     throw ForumException("文件不能超过 10MB")

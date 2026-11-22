@@ -97,6 +97,10 @@ fun HomeScreen(account: AccountViewModel = viewModel()) {
     LaunchedEffect(selected) {
         if (selected !in visitedTabs) visitedTabs.add(selected)
     }
+    // 打开 App 自动签到：已登录时静默执行，已签过则返回"今日已签到"，失败不打扰用户。
+    LaunchedEffect(state.loggedIn) {
+        if (state.loggedIn) runCatching { account.repository.signIn() }
+    }
     LaunchedEffect(stack.last().id) {
         delay(PageTransitionMillis.toLong())
         navigating = false

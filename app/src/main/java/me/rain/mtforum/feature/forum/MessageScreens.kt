@@ -36,6 +36,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import kotlinx.coroutines.*
 import me.rain.mtforum.core.network.*
+import me.rain.mtforum.core.network.readUpTo
 import me.rain.mtforum.core.ui.*
 import me.rain.mtforum.core.ui.icons.*
 import top.yukonga.miuix.kmp.basic.*
@@ -292,7 +293,7 @@ fun ConversationScreen(
                         val limit = (active.upload?.maxBytes ?: 8 * 1024 * 1024)
                             .coerceAtMost(10 * 1024 * 1024)
                         val data = context.contentResolver.openInputStream(uri)?.use {
-                            it.readNBytes(limit + 1)
+                            it.readUpTo(limit + 1)
                         } ?: throw ForumException("无法读取图片")
                         if (data.size > limit) throw ForumException("图片超出论坛限制")
                         var name = "picture.jpg"

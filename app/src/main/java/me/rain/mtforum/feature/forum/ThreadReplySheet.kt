@@ -44,6 +44,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.rain.mtforum.core.network.*
+import me.rain.mtforum.core.network.readUpTo
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
@@ -125,7 +126,7 @@ internal fun ThreadReplySheet(
                         val mime = context.contentResolver.getType(uri) ?: "image/jpeg"
                         val limit = active.upload.maxBytes.coerceAtMost(10 * 1024 * 1024)
                         val imageBytes = context.contentResolver.openInputStream(uri)?.use {
-                            it.readNBytes(limit + 1)
+                            it.readUpTo(limit + 1)
                         } ?: throw ForumException("无法读取图片")
                         if (imageBytes.size > limit) throw ForumException("图片超过上传限制")
                         var filename = "image.jpg"
